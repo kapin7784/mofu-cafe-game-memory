@@ -51,7 +51,7 @@
 
       <div
         class="board"
-        :style="{ gridTemplateColumns: `repeat(${boardColumns}, 80px)` }"
+        :class="{ 'board-hard': difficulty === 'hard' }"
       >
         <div
           v-for="card in cards"
@@ -364,7 +364,18 @@ function flipCard(card) {
 
 .board {
   display: grid;
+  grid-template-columns: repeat(4, 80px);
   gap: 10px;
+}
+
+.board-hard {
+  grid-template-columns: repeat(8, 80px);
+}
+
+@media (max-width: 760px) {
+  .board-hard {
+    grid-template-columns: repeat(4, 80px);
+  }
 }
 
 .card {
