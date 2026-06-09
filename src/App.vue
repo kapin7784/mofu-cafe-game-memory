@@ -470,4 +470,12 @@ function flipCard(card) {
   padding: 8px 16px;
   cursor: pointer;
 }
+
+@media (max-width: 760px) {
+  .game {
+    justify-content: flex-start;
+    padding: 32px 0 40px;
+    box-sizing: border-box;
+  }
+}
 </style>
