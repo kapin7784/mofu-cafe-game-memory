@@ -23,7 +23,24 @@
 
       <div class="status">
         <div>
-          <div>難易度: {{ difficulty }}</div>
+          <div class="difficulty">
+            難易度: {{ difficulty }}
+            <button class="difficulty-toggle" @click="toggleDifficultyMenu">
+              🔼
+            </button>
+
+            <div v-if="showDifficultyMenu" class="difficulty-menu">
+              <button
+                v-for="option in difficultyOptions"
+                :key="option.value"
+                :class="{ active: difficulty === option.value }"
+                @click="changeDifficulty(option.value)"
+              >
+                {{ option.label }}
+              </button>
+            </div>
+          </div>
+
           <div>経験値: {{ experience }}</div>
         </div>
 
@@ -32,7 +49,10 @@
         </button>
       </div>
 
-      <div class="board">
+      <div
+        class="board"
+        :style="{ gridTemplateColumns: `repeat(${boardColumns}, 80px)` }"
+      >
         <div
           v-for="card in cards"
           :key="card.id"
@@ -81,6 +101,7 @@ const selectedCards = ref([])
 const isChecking = ref(false)
 const hasReceivedReward = ref(false)
 const showResetConfirm = ref(false)
+const showDifficultyMenu = ref(false)
 
 const hasStarted = ref(false)
 const password = ref("")
@@ -90,8 +111,49 @@ const correctPassword = "mochi"
 const difficulty = ref("easy")
 const experience = ref(Number(localStorage.getItem("experience")) || 0)
 
+const difficultyOptions = [
+  { value: "easy", label: "easy" },
+  { value: "normal", label: "normal" },
+  { value: "hard", label: "hard" }
+]
+
+const allCharacters = [
+  { name: "kurumi", image: `${import.meta.env.BASE_URL}kurumi.png` },
+  { name: "mitarashi", image: `${import.meta.env.BASE_URL}mitarashi.png` },
+  { name: "syrup", image: `${import.meta.env.BASE_URL}syrup.png` },
+  { name: "petit", image: `${import.meta.env.BASE_URL}petit.png` },
+
+  { name: "yomogi", image: `${import.meta.env.BASE_URL}yomogi.png` },
+  { name: "azuki", image: `${import.meta.env.BASE_URL}azuki.png` },
+  { name: "tiramisu", image: `${import.meta.env.BASE_URL}tiramisu.png` },
+  { name: "souffle", image: `${import.meta.env.BASE_URL}souffle.png` },
+
+  { name: "leche", image: `${import.meta.env.BASE_URL}leche.png` },
+  { name: "eclair", image: `${import.meta.env.BASE_URL}eclair.png` },
+  { name: "earlgrey", image: `${import.meta.env.BASE_URL}earlgrey.png` },
+  { name: "momiji", image: `${import.meta.env.BASE_URL}momiji.png` },
+  { name: "daifuku", image: `${import.meta.env.BASE_URL}daifuku.png` },
+  { name: "botamochi", image: `${import.meta.env.BASE_URL}botamochi.png` },
+  { name: "hotaru", image: `${import.meta.env.BASE_URL}hotaru.png` },
+  { name: "kikyo", image: `${import.meta.env.BASE_URL}kikyo.png` }
+]
+
+const characterCount = computed(() => {
+  if (difficulty.value === "easy") return 4
+  if (difficulty.value === "normal") return 8
+  if (difficulty.value === "hard") return 16
+  return 4
+})
+
+const boardColumns = computed(() => {
+  if (difficulty.value === "hard") return 8
+  return 4
+})
+
 const experienceReward = computed(() => {
   if (difficulty.value === "easy") return 50
+  if (difficulty.value === "normal") return 100
+  if (difficulty.value === "hard") return 200
   return 0
 })
 
@@ -109,13 +171,18 @@ function startGame() {
   hasStarted.value = true
 }
 
+function toggleDifficultyMenu() {
+  showDifficultyMenu.value = !showDifficultyMenu.value
+}
+
+function changeDifficulty(nextDifficulty) {
+  difficulty.value = nextDifficulty
+  showDifficultyMenu.value = false
+  initializeGame()
+}
+
 function initializeGame() {
-  const characters = [
-    { name: "kurumi", image: `${import.meta.env.BASE_URL}kurumi.png` },
-    { name: "mitarashi", image: `${import.meta.env.BASE_URL}mitarashi.png` },
-    { name: "syrup", image: `${import.meta.env.BASE_URL}syrup.png` },
-    { name: "petit", image: `${import.meta.env.BASE_URL}petit.png` }
-  ]
+  const characters = allCharacters.slice(0, characterCount.value)
 
   const deck = [...characters, ...characters]
     .sort(() => Math.random() - 0.5)
@@ -252,6 +319,44 @@ function flipCard(card) {
   text-align: left;
 }
 
+.difficulty {
+  position: relative;
+}
+
+.difficulty-toggle {
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.difficulty-menu {
+  position: absolute;
+  top: 26px;
+  left: 64px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  min-width: 90px;
+  background: white;
+  border: 1px solid #4a4a4a;
+}
+
+.difficulty-menu button {
+  padding: 8px 12px;
+  border: none;
+  background: white;
+  color: #4a4a4a;
+  text-align: left;
+  cursor: pointer;
+}
+
+.difficulty-menu button:hover,
+.difficulty-menu button.active {
+  background: #f3dfe4;
+}
+
 .reset-button {
   padding: 8px 12px;
   cursor: pointer;
@@ -259,7 +364,6 @@ function flipCard(card) {
 
 .board {
   display: grid;
-  grid-template-columns: repeat(4, 80px);
   gap: 10px;
 }
 
