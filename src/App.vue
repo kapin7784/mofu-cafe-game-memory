@@ -1,17 +1,17 @@
 <template>
   <div class="game">
     <div v-if="!hasStarted" class="start-screen">
-      <h1 class="title">♪ もふカフェ絵あわせ ♪</h1>
+      <h1 class="title">♡もふカフェ絵あわせ♡</h1>
 
       <input
         v-model="password"
         class="password-input"
         type="text"
-        placeholder="合言葉を入力"
+        placeholder="あいことば を にゅうりょく"
         @keydown.enter="startGame"
       />
 
-      <button class="start-button" @click="startGame">ゲーム開始</button>
+      <button class="start-button" @click="startGame">はじめる♪</button>
 
       <p v-if="passwordError" class="password-error">
         {{ passwordError }}
@@ -19,12 +19,12 @@
     </div>
 
     <template v-else>
-      <h1 class="title">♪ もふカフェ絵あわせ ♪</h1>
+      <h1 class="title">♡もふカフェ絵あわせ♡</h1>
 
       <div class="status">
         <div>
           <div class="difficulty">
-            難易度: {{ difficulty }}
+            むずかしさ: {{ difficultyLabel }}
             <button class="difficulty-toggle" @click="toggleDifficultyMenu">
               🔼
             </button>
@@ -41,11 +41,11 @@
             </div>
           </div>
 
-          <div>経験値: {{ experience }}</div>
+          <div>けいけんち: {{ experience }}</div>
         </div>
 
         <button class="reset-button" @click="showResetConfirm = true">
-          経験値リセット
+          リセット
         </button>
       </div>
 
@@ -74,15 +74,15 @@
 
         <div v-if="isCleared" class="clear-message">
           <p>⭐️ ゲームクリア！⭐️</p>
-          <p>経験値 +{{ experienceReward }}</p>
-          <button @click="initializeGame">もう一度遊ぶ</button>
+          <p>けいけんち +{{ experienceReward }}</p>
+          <button @click="initializeGame">もう一回あそぶ</button>
         </div>
       </div>
     </template>
 
     <div v-if="showResetConfirm" class="confirm-overlay">
       <div class="confirm-box">
-        <p>経験値が0になります！本当によろしいですか？</p>
+        <p>けいけんち が0になります！本当によろしいですか？</p>
 
         <div class="confirm-buttons">
           <button @click="resetExperience">はい</button>
@@ -109,12 +109,16 @@ const passwordError = ref("")
 const correctPassword = "mochi"
 
 const difficulty = ref("easy")
+const difficultyLabel = computed(() => {
+  const option = difficultyOptions.find((option) => option.value === difficulty.value)
+  return option?.label || difficulty.value
+})
 const experience = ref(Number(localStorage.getItem("experience")) || 0)
 
 const difficultyOptions = [
-  { value: "easy", label: "easy" },
-  { value: "normal", label: "normal" },
-  { value: "hard", label: "hard" }
+  { value: "easy", label: "かんたん" },
+  { value: "normal", label: "ふつう" },
+  { value: "hard", label: "むずい" }
 ]
 
 const allCharacters = [
@@ -264,6 +268,14 @@ function flipCard(card) {
 </script>
 
 <style scoped>
+
+@font-face {
+  font-family: 'MisakiGothic';
+  src: url('/misaki_gothic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .game {
   min-height: 100vh;
   min-height: 100dvh;
@@ -273,6 +285,7 @@ function flipCard(card) {
   justify-content: center;
   background-color: #ead0d6;
   color: #4a4a4a;
+  font-family: 'MisakiGothic', sans-serif;
 }
 
 .start-screen {
@@ -284,8 +297,9 @@ function flipCard(card) {
 
 .title {
   margin: 0 0 40px;
+  font: inherit;
   font-size: 26px;
-  font-weight: 700;
+  font-weight: bold;
   color: #7a6d72;
   text-align: center;
 }
@@ -293,9 +307,21 @@ function flipCard(card) {
 .password-input {
   padding: 10px;
   font-size: 16px;
+  font: inherit;
   background-color: white;
   border: 1px solid #4a4a4a;
   color: #4a4a4a;
+}
+
+button {
+  font: inherit;
+  font-size: 16px;
+  color: white;
+  background-color: #c887a0;
+  border: 1px solid #4a4a4a;
+  border-radius: 4px;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .start-button {
