@@ -156,7 +156,7 @@ const hasReceivedReward = ref(false)
 const showResetConfirm = ref(false)
 const showDifficultyMenu = ref(false)
 const showInfo = ref(false)
-const imageCreditUrl = "https://mofucafe.xii.jp/#purohu"
+const imageCreditUrl = "https://mofucafe.xii.jp/"
 
 const hasStarted = ref(false)
 const password = ref("")
