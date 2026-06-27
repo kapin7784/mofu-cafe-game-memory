@@ -1,7 +1,17 @@
 <template>
   <div class="game">
     <div v-if="!hasStarted" class="start-screen">
-      <h1 class="title">♡もふカフェ絵あわせ♡</h1>
+      <div class="title-row">
+        <h1 class="title">♡もふカフェ絵あわせ♡</h1>
+        <button
+          class="info-button"
+          type="button"
+          aria-label="ゲームの説明を表示"
+          @click="showInfo = true"
+        >
+          ?
+        </button>
+      </div>
 
       <input
         v-model="password"
@@ -19,7 +29,17 @@
     </div>
 
     <template v-else>
-      <h1 class="title">♡もふカフェ絵あわせ♡</h1>
+      <div class="title-row">
+        <h1 class="title">♡もふカフェ絵あわせ♡</h1>
+        <button
+          class="info-button"
+          type="button"
+          aria-label="ゲームの説明を表示"
+          @click="showInfo = true"
+        >
+          ?
+        </button>
+      </div>
 
       <div class="status">
         <div>
@@ -80,6 +100,39 @@
       </div>
     </template>
 
+    <div v-if="showInfo" class="info-overlay" @click.self="showInfo = false">
+      <div class="info-box">
+        <button
+          class="info-close"
+          type="button"
+          aria-label="とじる"
+          @click="showInfo = false"
+        >
+          ×
+        </button>
+
+        <h2>あそびかた</h2>
+        <p>
+          おなじ絵(え)のカードを、2まいずつみつけるゲームです。
+          ぜんぶそろえると、むずかしさ ごとのけいけんちがふえます。
+          ブラウザやタブをとじても、けいけんちはのこります。          
+        </p>
+
+        <h2>ちゅうい</h2>
+        <p>
+          ブラウザの「webサイトデータ」をさくじょすると、けいけんちが0にリセットされます。かいはつしゃがコードをなおしたときもおなじです。<br />
+        </p>
+
+        <h2>がぞうについて</h2>
+        <p>
+          もふもふペットCafe さまのイラストをおかりしています。<br />:
+          <a :href="imageCreditUrl" target="_blank" rel="noopener noreferrer">
+            {{ imageCreditUrl }}
+          </a>
+        </p>
+      </div>
+    </div>
+
     <div v-if="showResetConfirm" class="confirm-overlay">
       <div class="confirm-box">
         <p>けいけんち が0になります！本当によろしいですか？</p>
@@ -102,6 +155,8 @@ const isChecking = ref(false)
 const hasReceivedReward = ref(false)
 const showResetConfirm = ref(false)
 const showDifficultyMenu = ref(false)
+const showInfo = ref(false)
+const imageCreditUrl = "https://mofucafe.xii.jp/#purohu"
 
 const hasStarted = ref(false)
 const password = ref("")
@@ -295,13 +350,34 @@ function flipCard(card) {
   align-items: stretch;
 }
 
-.title {
+.title-row {
+  position: relative;
+  width: 350px;
   margin: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  margin: 0;
   font: inherit;
   font-size: 26px;
   font-weight: bold;
   color: #7a6d72;
   text-align: center;
+}
+
+.info-button {
+  position: absolute;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 50%;
+  color: #7a6d72;
+  background: #ead0d6;
+  cursor: pointer;
 }
 
 .password-input {
@@ -497,11 +573,72 @@ button {
   cursor: pointer;
 }
 
+.info-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgb(0 0 0 / 40%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.info-box {
+  position: relative;
+  width: min(340px, 100%);
+  padding: 24px 20px 20px;
+  background: white;
+  border: 1px solid #4a4a4a;
+  text-align: left;
+  line-height: 1.7;
+}
+
+.info-box h2 {
+  margin: 0 0 8px;
+  font: inherit;
+  font-size: 18px;
+  font-weight: bold;
+  color: #7a6d72;
+}
+
+.info-box p {
+  margin: 0 0 16px;
+}
+
+.info-box p:last-child {
+  margin-bottom: 0;
+}
+
+.info-box a {
+  color: #9c5270;
+  word-break: break-all;
+}
+
+.info-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: #7a6d72;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
 @media (max-width: 760px) {
   .game {
     justify-content: flex-start;
     padding: 32px 0 40px;
     box-sizing: border-box;
+  }
+  .title-row,
+  .start-screen,
+  .status {
+    width: min(350px, calc(100vw - 32px));
   }
 }
 </style>
